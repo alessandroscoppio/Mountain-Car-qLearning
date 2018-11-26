@@ -28,11 +28,11 @@ def calculate_q_values():
 
         observation = env.reset()
 
-        eta = max(minimum_learning_rate, initial_learning_rate * (0.85 ** (episode // 100)))
+        current_learning_rate = max(minimum_learning_rate, initial_learning_rate * (0.85 ** (episode // 100)))
         done = False
         while not done:
             # Get current state
-            state = obs_to_state(observation)
+            state = get_state_from_observation(observation)
 
             # Choose an action
             if np.random.uniform(0, 1) < epsilon:
@@ -43,22 +43,21 @@ def calculate_q_values():
             observation, reward, done, info = env.step(action)
 
             # Discover new state
-            new_state = obs_to_state(observation)
+            new_state = get_state_from_observation(observation)
 
             # Update Q Learning Values
-            q_learning_values[state + (action,)] = q_learning_values[state + (action,)] + eta * (
-                        reward + discount_factor * np.max(q_learning_values[new_state]) - q_learning_values[
-                    state + (action,)])
+            q_learning_values[state][action] = q_learning_values[state][action] + current_learning_rate * (
+                        reward + discount_factor * np.max(q_learning_values[new_state]) - q_learning_values[state][action])
 
         if episode % 100 == 0:
             print('Episode #{}'.format(episode+1))
 
 
-def obs_to_state(obs):
+def get_state_from_observation(observation):
     """ Maps an observation to state """
-    env_dx = (env.observation_space.high - env.observation_space.low) / number_of_states
-    a = int((obs[0] - env.observation_space.low[0])/env_dx[0])
-    b = int((obs[1] - env.observation_space.low[1])/env_dx[1])
+    difference = (env.observation_space.high - env.observation_space.low) / number_of_states
+    a = int((observation[0] - env.observation_space.low[0])/difference[0])
+    b = int((observation[1] - env.observation_space.low[1])/difference[1])
     return a, b
 
 
@@ -72,14 +71,13 @@ if __name__ == '__main__':
     graph = sns.heatmap(q_values_to_plot, linewidths=0.5)
     plt.show()
 
-
     # Perform a demonstration
     observation = env.reset()
     done = False
     while not done:
         env.render()
-        time.sleep(0.015)
-        state = obs_to_state(observation)
+        time.sleep(0.0015)
+        state = get_state_from_observation(observation)
         action = optimal_policy[state]
         observation, reward, done, info = env.step(action)
 
