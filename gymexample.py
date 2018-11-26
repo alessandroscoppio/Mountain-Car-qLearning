@@ -25,3 +25,4 @@ for _ in range(10):
         if slow: print(reward)
         if slow: print(done)
     print("Episode finished after ", timesteps, "timesteps.")
+env.close()

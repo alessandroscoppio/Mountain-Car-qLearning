@@ -1,8 +1,7 @@
 import time
-
+import matplotlib.pyplot as plt
 import numpy as np
 import gym
-from gym import wrappers
 
 n_states = 40
 max_episodes = 10000
@@ -62,7 +61,7 @@ def run(render=True, policy=None):
     for iter in range(max_iterations):
         if render:
             env.render()
-            time.sleep(0.05)
+            time.sleep(0.015)
         if policy is None:
             action = env.action_space.sample()
         else:
@@ -84,11 +83,41 @@ def obs_to_state(obs):
     b = int((obs[1] - env_low[1])/env_dx[1])
     return a, b
 
+
+'''
+Take inspiration from here for the plotting. 
+'''
+# def plotValues(qValues, episodes, gamma, save=False, folder='normal'):
+#     fig, ax = plt.subplots()
+#     ax.set_title(f'Value function of states with {episodes} episodes. Gamma: {gamma}')
+#     plt.imshow(np.max(qValues, axis=2))
+#     # plt.xlabel('Position')
+#     # plt.ylabel('Velocity')
+#     # ax.set_xticklabels(np.around(f1Bins, decimals=2))
+#     # ax.set_yticklabels(np.around(f2Bins, decimals=2))
+#     cbar = plt.colorbar()
+#     cbar.set_label('Value')
+#     if save:
+#         plt.savefig(f'fig/{folder}/Values after {episodes} episodes.png')
+#         plt.close()
+#     else:
+#         plt.show()
+
 if __name__ == '__main__':
+
     train(render=False)
     solution_policy = np.argmax(q_table, axis=2)
+
+    # solution_policy = open("solution_policy")
+    # with open('solution_policy.npy', 'rb') as f:
+    #     solution_policy = np.load(f)
+
     print("Solution policy")
     print(q_table)
+
+    # solution_policy.tofile("solution_policy")
+    # with open(f'solution_policy.npy', 'wb') as f:
+    #     np.save(f, solution_policy)
 
     # Animate it
     solution_policy_scores = [run(render=False, policy=solution_policy) for _ in range(100)]
