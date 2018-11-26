@@ -5,11 +5,11 @@ import numpy as np
 import gym
 
 n_states = 40
-max_episodes = 10000
+max_episodes = 1000
 initial_lr = 1.0 #Initial Learning rate
 min_lr = 0.003
 discount_factor = 1.0
-max_iterations = 10000
+max_iterations = 1000
 eps = 0.02
 gym.envs.register(
 
@@ -106,19 +106,23 @@ Take inspiration from here for the plotting.
 
 if __name__ == '__main__':
 
-    # train(render=False)
-    # solution_policy = np.argmax(q_table, axis=2)
+    train(render=False)
+    solution_policy = np.argmax(q_table, axis=2)
 
-    solution_policy = open("solution_policy")
-    with open('solution_policy.npy', 'rb') as f:
-        solution_policy = np.load(f)
+    # solution_policy = open("solution_policy")
+    # with open('solution_policy.npy', 'rb') as f:
+    #     solution_policy = np.l0oad(f)
     # plt.show()
 
     print("Solution policy")
     print(q_table)
 
-    graph = sns.heatmap(q_table, ax=2, linewidths=0.5)
+    graph = sns.heatmap(q_table[:, :, 0], linewidths=0.5)
     plt.show()
+
+    graph2 = sns.heatmap(solution_policy, linewidths=0.5)
+    plt.show()
+
 
     # solution_policy.tofile("solution_policy")
     # with open(f'solution_policy.npy', 'wb') as f:
@@ -126,6 +130,11 @@ if __name__ == '__main__':
 
     # Animate it
     solution_policy_scores = [run(render=False, policy=solution_policy) for _ in range(100)]
+
+    # this is bullshit
+    # graph3 = sns.heatmap(solution_policy_scores, ax=0, linewidths=0.5)
+    # plt.show()
+
     print("Average score of solution = ", np.mean(solution_policy_scores))
     run(render=True, policy=solution_policy)
     env.close()

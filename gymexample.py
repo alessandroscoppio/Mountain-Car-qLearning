@@ -1,3 +1,6 @@
+import time
+import matplotlib.pyplot as plt
+import seaborn as sns
 import gym
 import numpy as np
 
@@ -22,6 +25,7 @@ q_learning_values = np.zeros((number_of_states, number_of_states, env.action_spa
 
 def calculate_q_values():
     for episode in range(episodes):
+
         observation = env.reset()
 
         eta = max(minimum_learning_rate, initial_learning_rate * (0.85 ** (episode // 100)))
@@ -61,13 +65,20 @@ def obs_to_state(obs):
 if __name__ == '__main__':
     calculate_q_values()
     optimal_policy = np.argmax(q_learning_values, axis=2)
-    print optimal_policy
+    print(optimal_policy)
+
+    # In order to plot the q values of the policy take the max value in the last dimension of the q_learning_table
+    q_values_to_plot = np.max(q_learning_values, axis=2)
+    graph = sns.heatmap(q_values_to_plot, linewidths=0.5)
+    plt.show()
+
 
     # Perform a demonstration
     observation = env.reset()
     done = False
     while not done:
         env.render()
+        time.sleep(0.015)
         state = obs_to_state(observation)
         action = optimal_policy[state]
         observation, reward, done, info = env.step(action)
