@@ -1,5 +1,6 @@
 import time
 import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
 import gym
 
@@ -105,15 +106,19 @@ Take inspiration from here for the plotting.
 
 if __name__ == '__main__':
 
-    train(render=False)
-    solution_policy = np.argmax(q_table, axis=2)
+    # train(render=False)
+    # solution_policy = np.argmax(q_table, axis=2)
 
-    # solution_policy = open("solution_policy")
-    # with open('solution_policy.npy', 'rb') as f:
-    #     solution_policy = np.load(f)
+    solution_policy = open("solution_policy")
+    with open('solution_policy.npy', 'rb') as f:
+        solution_policy = np.load(f)
+    # plt.show()
 
     print("Solution policy")
     print(q_table)
+
+    graph = sns.heatmap(q_table, ax=2, linewidths=0.5)
+    plt.show()
 
     # solution_policy.tofile("solution_policy")
     # with open(f'solution_policy.npy', 'wb') as f:
