@@ -11,8 +11,7 @@ initial_learning_rate = 1.0
 minimum_learning_rate = 0.003
 discount_factor = 0.99
 epsilon = 0.02
-# Needed to plot the iterations needed to converge per episode
-iterations_needed = []
+iterations_needed = []  # Needed to plot the iterations needed to converge per episode
 
 gym.envs.register(
     id='MountainCarMyEasyVersion-v0',
@@ -69,18 +68,17 @@ if __name__ == '__main__':
     optimal_policy = np.argmax(q_learning_values, axis=2)
     print(optimal_policy)
 
-    # In order to plot the q values of the policy take the max value in the last dimension of the q_learning_table
-
-    # q_values_to_plot = np.max(q_learning_values, axis=2)
     # plt.plot(range(len(iterations_needed)), iterations_needed)
 
-    state_values = pd.DataFrame(index=np.round(np.arange(-1.2, 0.6, 0.045), 2), columns=np.round(np.arange(-0.07, 0.07, 0.0035), 3),
-                                data=np.max(q_learning_values, axis=2))
+    # In order to plot the q values of the policy take the max value in the last dimension of the q_learning_table
+    state_values = pd.DataFrame(index=np.round(np.arange(-1.2, 0.6, 0.045), 2), columns=np.round(np.arange(-0.07, 0.07, 0.0035), 3), data=np.max(q_learning_values, axis=2))
 
-    sns.heatmap(state_values, linewidths=0)
+    sns.heatmap(state_values, linewidths=0, cbar_kws={'label': 'Q Values'})
+    plt.xlabel("Velocity")
+    plt.ylabel("Position")
     plt.show()
 
-    # Perform a demonstration
+    # Perform a demonstration with the optimal Policy
     observation = env.reset()
     done = False
     while not done:
